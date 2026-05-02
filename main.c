@@ -1,6 +1,5 @@
 // Librarys
 #include <stdio.h>
-#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -82,6 +81,7 @@ int main(int argc, char* argv[]) {
         free(filebuffer); // Free the memory from the heap
         filebuffer = NULL; // avoid folating pointer errors
         return 0;
+
     }
 
 
@@ -110,6 +110,11 @@ int main(int argc, char* argv[]) {
             fclose(fileptr);
             printf("Sucessfully deleted all tasks.");
             return 0;
+
+
+
+
+
         }
 
         // Specific task removal
@@ -118,6 +123,7 @@ int main(int argc, char* argv[]) {
 
         FILE *copy_file_ptr = fopen("newlist.txt", "w"); // Create new file in write mode 
 
+        int Found = 0; // Variable to see if you have found the task
         
         char* removaltask = argv[2]; // Make a variable called removal task for readability
         char* currentstring = calloc(1000, 1); // Make a variable to hold the current string read 
@@ -131,8 +137,10 @@ int main(int argc, char* argv[]) {
         while(fgets(currentstring, 10000, original_file_ptr)) { // Go through every string 
             char *StringSearch = strstr(currentstring, removaltask); // Create a pointer as required by syntax of strstr
 
-            if(StringSearch == NULL) { // Check if it came back with nothing because for some reason its inverted?
+            if(StringSearch == NULL) { // Check if it came back with nothing because you're searching FOR the removal task
                 fprintf(copy_file_ptr, "%s", currentstring); // copy to the copy file
+            } else {
+                Found = 1; // If the string does contain the remove task then you have found something so change the varibale to true
             }
         }
 
@@ -145,9 +153,14 @@ int main(int argc, char* argv[]) {
         
         rename("newlist.txt", "list.txt"); // Rename file
 
-        printf("Succesfully removed task \"%s\"", removaltask);
+        if (Found == 1) {
+            printf("Succesfully removed task \"%s\"", removaltask); // if sucessful print this
+        } else {
+            printf("Unable to find task \"%s\"", removaltask); // if not print this
+        }
         
         
+        // free memory
         free(currentstring);
         currentstring = NULL;
         return 0;
